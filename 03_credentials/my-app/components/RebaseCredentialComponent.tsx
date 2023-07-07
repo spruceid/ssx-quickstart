@@ -1,6 +1,6 @@
 "use client";
 import { toCredentialEntry } from "@/utils/rebase";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 
@@ -13,10 +13,10 @@ const endpoints = {
 };
 
 interface IRebaseCredentialComponent {
-  sk: SpruceKit;
+  ssx: SSX;
 }
 
-const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
+const RebaseCredentialComponent = ({ ssx }: IRebaseCredentialComponent) => {
   const [rebaseClient, setRebaseClient] = useState<any>();
   const [signer, setSigner] = useState<ethers.Signer>();
   const [title, setTitle] = useState<string>('');
@@ -33,7 +33,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
 
   const getContentList = async () => {
     setLoading(true);
-    let { data } = await sk.storage.list();
+    let { data } = await ssx.storage.list();
     data = data.filter((d: string) => d.includes('/credentials/'))
     setCredentialList(data);
     setLoading(false);
@@ -45,7 +45,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
   };
 
   const createSigner = async () => {
-    const ethSigner = await sk.getSigner();
+    const ethSigner = await ssx.getSigner();
     setSigner(ethSigner);
   };
 
@@ -53,7 +53,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
     return {
       pkh: {
         eip155: {
-          address: sk.address(),
+          address: ssx.address(),
           chain_id: '1'
         }
       }
@@ -114,7 +114,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
       const stmt = await statement(credentialType, content);
       const sig = (await signer?.signMessage(stmt)) ?? '';
       const jwt_str = await witness(credentialType, content, sig);
-      await sk.storage.put(fileName, jwt_str);
+      await ssx.storage.put(fileName, jwt_str);
       setCredentialList((prevList) => [...prevList, `my-app/${fileName}`]);
     } catch (e) {
       console.error(e);
@@ -126,7 +126,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
     setLoading(true);
     try {
       const contentName = content.replace('my-app/', '')
-      const { data } = await sk.storage.get(contentName);
+      const { data } = await ssx.storage.get(contentName);
       setViewingContent(`${content}:\n${JSON.stringify(toCredentialEntry(data), null, 2)}`);
     } catch (e) {
       console.error(e);
@@ -137,7 +137,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
   const handleDeleteContent = async (content: string) => {
     setLoading(true);
     const contentName = content.replace('my-app/', '')
-    await sk.storage.delete(contentName);
+    await ssx.storage.delete(contentName);
     setCredentialList((prevList) => prevList.filter((c) => c !== content));
     setLoading(false);
   };

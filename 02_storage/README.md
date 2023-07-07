@@ -3,9 +3,9 @@
 > This section installs the functionality to store and retrieve data in Kepler.
 
 
-A completed version of this part can be found in the example repository ([02_storage](https://github.com/spruceid/sprucekit-quickstart/tree/main/02_storage)).
+A completed version of this part can be found in the example repository ([02_storage](https://github.com/spruceid/ssx-quickstart/tree/main/02_storage)).
 
-You don't need to install any new dependencies, as Kepler is natively supported by SpruceKit. Run the following to create the new component file:
+You don't need to install any new dependencies, as Kepler is natively supported by SSX. Run the following to create the new component file:
 
 ```bash
 touch components/KeplerStorageComponent.tsx
@@ -14,14 +14,14 @@ touch components/KeplerStorageComponent.tsx
 Then add the following to `my-app/components/KeplerStorageComponent.tsx` file:
 ```ts
 "use client";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { useEffect, useState } from "react";
 
 interface IKeplerStorageComponent {
-  sk: SpruceKit
+  ssx: SSX
 }
 
-const KeplerStorageComponent = ({ sk }: IKeplerStorageComponent) => {
+const KeplerStorageComponent = ({ ssx }: IKeplerStorageComponent) => {
 
   const [key, setKey] = useState<string>('');
   const [value, setValue] = useState<string>('');
@@ -35,7 +35,7 @@ const KeplerStorageComponent = ({ sk }: IKeplerStorageComponent) => {
 
   const getContentList = async () => {
     setLoading(true);
-    let { data } = await sk.storage.list();
+    let { data } = await ssx.storage.list();
     data = data.filter((d: string) => d.includes('/content/'))
     setContentList(data);
     setLoading(false);
@@ -48,7 +48,7 @@ const KeplerStorageComponent = ({ sk }: IKeplerStorageComponent) => {
     }
     const formatedKey = 'content/' + key.replace(/\ /g, '_');
     setLoading(true);
-    await sk.storage.put(formatedKey, value);
+    await ssx.storage.put(formatedKey, value);
     setContentList((prevList) => [...prevList, `my-app/${formatedKey}`]);
     setKey('');
     setValue('');
@@ -58,7 +58,7 @@ const KeplerStorageComponent = ({ sk }: IKeplerStorageComponent) => {
   const handleGetContent = async (content: string) => {
     setLoading(true);
     const contentName = content.replace('my-app/', '')
-    const { data } = await sk.storage.get(contentName);
+    const { data } = await ssx.storage.get(contentName);
     setViewingContent(`${content}:\n${data}`);
     setLoading(false);
   };
@@ -66,7 +66,7 @@ const KeplerStorageComponent = ({ sk }: IKeplerStorageComponent) => {
   const handleDeleteContent = async (content: string) => {
     setLoading(true);
     const contentName = content.replace('my-app/', '')
-    await sk.storage.delete(contentName);
+    await ssx.storage.delete(contentName);
     setContentList((prevList) => prevList.filter((c) => c !== content));
     setLoading(false);
   };
@@ -148,16 +148,16 @@ Now update the SpruceKitComponent to import the storage component module by addi
 
 ```ts
 "use client";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 import KeplerStorageComponent from "./KeplerStorageComponent";
 
 const SpruceKitComponent = () => {
 
-  const [skProvider, setSpruceKit] = useState<SpruceKit | null>(null);
+  const [skProvider, setSpruceKit] = useState<SSX | null>(null);
 
   const spruceKitHandler = async () => {
-    const sk = new SpruceKit({
+    const ssx = new SSX({
       providers: {
         server: {
           host: "http://localhost:3000/api"
@@ -171,8 +171,8 @@ const SpruceKitComponent = () => {
         }
       }
     });
-    await sk.signIn();
-    setSpruceKit(sk);
+    await ssx.signIn();
+    setSpruceKit(ssx);
   };
 
   const spruceKitLogoutHandler = async () => {
@@ -202,7 +202,7 @@ const SpruceKitComponent = () => {
               </span>
             </button>
             <br />
-            <KeplerStorageComponent sk={skProvider} />
+            <KeplerStorageComponent ssx={skProvider} />
           </> :
           <button onClick={spruceKitHandler}>
             <span>

@@ -1,21 +1,21 @@
 "use client";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 
 const SpruceKitComponent = () => {
 
-  const [skProvider, setSpruceKit] = useState<SpruceKit | null>(null);
+  const [skProvider, setSpruceKit] = useState<SSX | null>(null);
 
   const spruceKitHandler = async () => {
-    const sk = new SpruceKit({
+    const ssx = new SSX({
       providers: {
         server: {
           host: "http://localhost:3000/api"
         }
       },
     });
-    await sk.signIn();
-    setSpruceKit(sk);
+    await ssx.signIn();
+    setSpruceKit(ssx);
   };
 
   const spruceKitLogoutHandler = async () => {

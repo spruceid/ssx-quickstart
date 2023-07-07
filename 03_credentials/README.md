@@ -4,9 +4,9 @@
 > This section integrates the functionality to generate a credential via Rebase.
 
 
-A completed version of this part can be found in the example repository ([03_rebase](https://github.com/spruceid/sprucekit-quickstart/tree/main/03_credentials)).
+A completed version of this part can be found in the example repository ([03_rebase](https://github.com/spruceid/ssx-quickstart/tree/main/03_credentials)).
 
-In this step, you must install Rebase as a new dependency, as it is not yet supported by SpruceKit. Run the following to add the dependency and create the new component file:
+In this step, you must install Rebase as a new dependency, as it is not yet supported by SSX. Run the following to add the dependency and create the new component file:
 
 ```bash
 npm i @rebase-xyz/rebase-client@^0.9.1 ethers@5.7.2
@@ -110,7 +110,7 @@ Then, add the following into `my-app/components/RebaseCredentialComponent.tsx`:
 ```ts
 "use client";
 import { toCredentialEntry } from "@/utils/rebase";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 
@@ -123,10 +123,10 @@ const endpoints = {
 };
 
 interface IRebaseCredentialComponent {
-  sk: SpruceKit;
+  ssx: SSX;
 }
 
-const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
+const RebaseCredentialComponent = ({ ssx }: IRebaseCredentialComponent) => {
   const [rebaseClient, setRebaseClient] = useState<any>();
   const [signer, setSigner] = useState<ethers.Signer>();
   const [title, setTitle] = useState<string>('');
@@ -143,7 +143,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
 
   const getContentList = async () => {
     setLoading(true);
-    let { data } = await sk.storage.list();
+    let { data } = await ssx.storage.list();
     data = data.filter((d: string) => d.includes('/credentials/'))
     setCredentialList(data);
     setLoading(false);
@@ -155,7 +155,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
   };
 
   const createSigner = async () => {
-    const ethSigner = await sk.getSigner();
+    const ethSigner = await ssx.getSigner();
     setSigner(ethSigner);
   };
 
@@ -163,7 +163,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
     return {
       pkh: {
         eip155: {
-          address: sk.address(),
+          address: ssx.address(),
           chain_id: '1'
         }
       }
@@ -224,7 +224,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
       const stmt = await statement(credentialType, content);
       const sig = (await signer?.signMessage(stmt)) ?? '';
       const jwt_str = await witness(credentialType, content, sig);
-      await sk.storage.put(fileName, jwt_str);
+      await ssx.storage.put(fileName, jwt_str);
       setCredentialList((prevList) => [...prevList, `my-app/${fileName}`]);
     } catch (e) {
       console.error(e);
@@ -236,7 +236,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
     setLoading(true);
     try {
       const contentName = content.replace('my-app/', '')
-      const { data } = await sk.storage.get(contentName);
+      const { data } = await ssx.storage.get(contentName);
       setViewingContent(`${content}:\n${JSON.stringify(toCredentialEntry(data), null, 2)}`);
     } catch (e) {
       console.error(e);
@@ -247,7 +247,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
   const handleDeleteContent = async (content: string) => {
     setLoading(true);
     const contentName = content.replace('my-app/', '')
-    await sk.storage.delete(contentName);
+    await ssx.storage.delete(contentName);
     setCredentialList((prevList) => prevList.filter((c) => c !== content));
     setLoading(false);
   };
@@ -329,17 +329,17 @@ Now update the SpruceKitComponent to import the credential component module by a
 
 ```ts
 "use client";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 import KeplerStorageComponent from "./KeplerStorageComponent";
 import RebaseCredentialComponent from "./RebaseCredentialComponent";
 
 const SpruceKitComponent = () => {
 
-  const [skProvider, setSpruceKit] = useState<SpruceKit | null>(null);
+  const [skProvider, setSpruceKit] = useState<SSX | null>(null);
 
   const spruceKitHandler = async () => {
-    const sk = new SpruceKit({
+    const ssx = new SSX({
       providers: {
         server: {
           host: "http://localhost:3000/api"
@@ -353,8 +353,8 @@ const SpruceKitComponent = () => {
         }
       }
     });
-    await sk.signIn();
-    setSpruceKit(sk);
+    await ssx.signIn();
+    setSpruceKit(ssx);
   };
 
   const spruceKitLogoutHandler = async () => {
@@ -384,9 +384,9 @@ const SpruceKitComponent = () => {
               </span>
             </button>
             <br />
-            <KeplerStorageComponent sk={skProvider} />
+            <KeplerStorageComponent ssx={skProvider} />
             <br />
-            <RebaseCredentialComponent sk={skProvider} />
+            <RebaseCredentialComponent ssx={skProvider} />
           </> :
           <button onClick={spruceKitHandler}>
             <span>

@@ -1,7 +1,7 @@
-import { SpruceKitServer } from "@spruceid/sprucekit-server";
+import { SpruceKitServer } from "@spruceid/ssx-server";
 
-const sk = new SpruceKitServer({
+const ssx = new SpruceKitServer({
   signingKey: process.env.SPRUCE_KIT_SIGNING_KEY,
 });
 
-export default sk;
+export default ssx;

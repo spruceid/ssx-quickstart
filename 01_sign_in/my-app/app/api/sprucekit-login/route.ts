@@ -1,4 +1,4 @@
-import sk from "../_spruceKit";
+import ssx from "../_spruceKit";
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'
 
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const nonce = cookieStore.get('nonce');
 
   return NextResponse.json(
-    await sk.login(
+    await ssx.login(
       body.siwe,
       body.signature,
       body.daoLogin,

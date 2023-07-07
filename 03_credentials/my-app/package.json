@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@rebase-xyz/rebase-client": "^0.9.1",
-    "@spruceid/sprucekit": "^0.1.0",
-    "@spruceid/sprucekit-server": "^0.1.0",
+    "@spruceid/ssx": "^0.1.0",
+    "@spruceid/ssx-server": "^0.1.0",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",

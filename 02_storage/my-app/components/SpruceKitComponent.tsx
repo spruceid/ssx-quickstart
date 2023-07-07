@@ -1,14 +1,14 @@
 "use client";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 import KeplerStorageComponent from "./KeplerStorageComponent";
 
 const SpruceKitComponent = () => {
 
-  const [skProvider, setSpruceKit] = useState<SpruceKit | null>(null);
+  const [skProvider, setSpruceKit] = useState<SSX | null>(null);
 
   const spruceKitHandler = async () => {
-    const sk = new SpruceKit({
+    const ssx = new SSX({
       providers: {
         server: {
           host: "http://localhost:3000/api"
@@ -22,8 +22,8 @@ const SpruceKitComponent = () => {
         }
       }
     });
-    await sk.signIn();
-    setSpruceKit(sk);
+    await ssx.signIn();
+    setSpruceKit(ssx);
   };
 
   const spruceKitLogoutHandler = async () => {
@@ -53,7 +53,7 @@ const SpruceKitComponent = () => {
               </span>
             </button>
             <br />
-            <KeplerStorageComponent sk={skProvider} />
+            <KeplerStorageComponent ssx={skProvider} />
           </> :
           <button onClick={spruceKitHandler}>
             <span>
