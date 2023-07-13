@@ -24,7 +24,7 @@ touch .env.local \
 Then, add an environment variable into the `my-app/.env.local` file:
 
 ```bash
-SPRUCE_KIT_SIGNING_KEY=anythingyouwanthere
+SSX_SIGNING_KEY=anythingyouwanthere
 ```
 
 Add a helper file to our code so that we don't have to instantiate a new SSX Server object directly every time. Add the following to `my-app/app/api/_ssx.ts` file:
@@ -33,7 +33,7 @@ Add a helper file to our code so that we don't have to instantiate a new SSX Ser
 import { SSXServer } from "@spruceid/ssx-server";
 
 const ssx = new SSXServer({
-  signingKey: process.env.SPRUCE_KIT_SIGNING_KEY,
+  signingKey: process.env.SSX_SIGNING_KEY,
 });
 
 export default ssx;

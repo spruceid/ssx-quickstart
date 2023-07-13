@@ -156,7 +156,7 @@ const SSXComponent = () => {
 
   const [ssxProvider, setSSX] = useState<SSX | null>(null);
 
-  const spruceKitHandler = async () => {
+  const ssxHandler = async () => {
     const ssx = new SSX({
       providers: {
         server: {
@@ -175,7 +175,7 @@ const SSXComponent = () => {
     setSSX(ssx);
   };
 
-  const spruceKitLogoutHandler = async () => {
+  const ssxLogoutHandler = async () => {
     ssxProvider?.signOut();
     setSSX(null);
   };
@@ -196,7 +196,7 @@ const SSXComponent = () => {
               </p>
             }
             <br />
-            <button onClick={spruceKitLogoutHandler}>
+            <button onClick={ssxLogoutHandler}>
               <span>
                 Sign-Out
               </span>
@@ -204,7 +204,7 @@ const SSXComponent = () => {
             <br />
             <KeplerStorageComponent ssx={ssxProvider} />
           </> :
-          <button onClick={spruceKitHandler}>
+          <button onClick={ssxHandler}>
             <span>
               Sign-In with Ethereum
             </span>
