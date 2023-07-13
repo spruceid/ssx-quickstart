@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import ssx from "../_spruceKit";
+import ssx from "../_ssx";
 
 export async function POST(request: Request) {
   return NextResponse.json(

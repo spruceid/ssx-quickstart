@@ -3,7 +3,7 @@
 > This section installs the functionality to store and retrieve data in Kepler.
 
 
-A completed version of this part can be found in the example repository ([02_storage](https://github.com/spruceid/ssx-quickstart/tree/main/02_storage)).
+A completed version of this part can be found in the example repository ([02_storage](https://github.com/spruceid/sprucekit-quickstart/tree/main/02_storage)).
 
 You don't need to install any new dependencies, as Kepler is natively supported by SSX. Run the following to create the new component file:
 
@@ -144,7 +144,7 @@ const KeplerStorageComponent = ({ ssx }: IKeplerStorageComponent) => {
 export default KeplerStorageComponent;
 ```
 
-Now update the SpruceKitComponent to import the storage component module by adding the following into `my-app/components/SpruceKitComponent.tsx` file:
+Now update the SSXComponent to import the storage component module by adding the following into `my-app/components/SSXComponent.tsx` file:
 
 ```ts
 "use client";
@@ -152,9 +152,9 @@ import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 import KeplerStorageComponent from "./KeplerStorageComponent";
 
-const SpruceKitComponent = () => {
+const SSXComponent = () => {
 
-  const [skProvider, setSpruceKit] = useState<SSX | null>(null);
+  const [ssxProvider, setSSX] = useState<SSX | null>(null);
 
   const spruceKitHandler = async () => {
     const ssx = new SSX({
@@ -172,22 +172,22 @@ const SpruceKitComponent = () => {
       }
     });
     await ssx.signIn();
-    setSpruceKit(ssx);
+    setSSX(ssx);
   };
 
   const spruceKitLogoutHandler = async () => {
-    skProvider?.signOut();
-    setSpruceKit(null);
+    ssxProvider?.signOut();
+    setSSX(null);
   };
 
-  const address = skProvider?.address() || '';
+  const address = ssxProvider?.address() || '';
 
   return (
     <>
       <h2>User Authorization Module</h2>
       <p>Authenticate and Authorize using your ETH keys</p>
       {
-        skProvider ?
+        ssxProvider ?
           <>
             {
               address &&
@@ -202,7 +202,7 @@ const SpruceKitComponent = () => {
               </span>
             </button>
             <br />
-            <KeplerStorageComponent ssx={skProvider} />
+            <KeplerStorageComponent ssx={ssxProvider} />
           </> :
           <button onClick={spruceKitHandler}>
             <span>
@@ -214,7 +214,7 @@ const SpruceKitComponent = () => {
   );
 };
 
-export default SpruceKitComponent;
+export default SSXComponent;
 ```
 
 That's it! Now you can run the app by using:

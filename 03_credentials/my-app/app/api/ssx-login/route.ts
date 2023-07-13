@@ -1,4 +1,4 @@
-import ssx from "../_spruceKit";
+import ssx from "../_ssx";
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'
 

@@ -2,7 +2,7 @@
 
 > This section installs SSX as a dependency and lets the user sign in to the app using Ethereum keys. 
 
-A completed version of this part can be found in the example repository ([01_sign_in](https://github.com/spruceid/ssx-quickstart/tree/main/01_sign_in)).
+A completed version of this part can be found in the example repository ([01_sign_in](https://github.com/spruceid/sprucekit-quickstart/tree/main/01_sign_in)).
 
 ## Connect SSX to Backend
 

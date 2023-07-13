@@ -1,5 +1,5 @@
 export interface BasicPostCredential {
-  type: "WitnessedBasicPost", // The URN of the UUID of the credential.
+  type: "BasicPostAttestation", // The URN of the UUID of the credential.
   id: string, // The DID of the user who is the credential subject, comes from the VC.credentialSubject.id
   subject: string,
   title: string,
@@ -28,7 +28,7 @@ export const toCredentialContent = (jwt_str: string): Record<string, any> | void
   if (!t) throw new Error('Malformed credential, no type property');
   if (t.length !== 2) throw new Error('Malformed credential, type property did not have length of 2');
   const credType = t[1];
-  if (credType !== 'WitnessedBasicPost') throw new Error(`Unsupported Credential Type: ${credType}`);
+  if (credType !== 'BasicPostAttestation') throw new Error(`Unsupported Credential Type: ${credType}`);
   const credID = vc?.id;
   if (!credID) throw new Error('No id property found under vc property in JWT credential');
   const subjID = vc?.credentialSubject?.id;
@@ -42,7 +42,7 @@ export const toCredentialContent = (jwt_str: string): Record<string, any> | void
     issuanceDate
   };
   switch (credType) {
-    case "WitnessedBasicPost": {
+    case "BasicPostAttestation": {
       let next = {
         title: getCredSubjProp("title", vc),
         body: getCredSubjProp("body", vc)

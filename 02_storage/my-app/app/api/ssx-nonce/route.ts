@@ -1,4 +1,4 @@
-import ssx from "../_spruceKit";
+import ssx from "../_ssx";
 
 export async function GET(request: Request) {
   const nonce = ssx.generateNonce();
