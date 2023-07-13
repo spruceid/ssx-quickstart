@@ -9,7 +9,7 @@ A completed version of this part can be found in the example repository ([01_sig
 To use the SSX library on the backend, you must install `@spruceid/ssx-server`. Furthermore, we must create the routes required by the authorization module (nonce, sign in, and sign out) for our Next app. To add those, use the following commands:
 
 ```bash
-npm i @spruceid/ssx-server 
+npm i @spruceid/ssx-server@2.0.0-beta.0
 mkdir app/api \
       app/api/ssx-nonce \
       app/api/ssx-login \
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
 To use the SSX library on the frontend you must install `@spruceid/ssx`. Furthermore, we need to create a component to create the authorization module logic. To add it, use the following commands:
 
 ```bash
-npm i @spruceid/ssx
+npm i @spruceid/ssx@2.0.0-beta.0
 mkdir components
 touch components/SSXComponent.tsx
 ```

@@ -9,7 +9,7 @@ A completed version of this part can be found in the example repository ([03_reb
 In this step, you must install Rebase as a new dependency, as it is not yet supported by SSX. Run the following to add the dependency and create the new component file:
 
 ```bash
-npm i @rebase-xyz/rebase-client@^0.9.1 ethers@5.7.2
+npm i @spruceid/rebase-client@^0.16.2 ethers@5.7.2
 mkdir utils
 touch utils/rebase.ts \
       components/RebaseCredentialComponent.tsx
