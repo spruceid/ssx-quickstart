@@ -1,51 +1,51 @@
 # Implement UserAuthorization Module 
 
-> This section installs SpruceKit as a dependency and lets the user sign in to the app using Ethereum keys. 
+> This section installs SSX as a dependency and lets the user sign in to the app using Ethereum keys. 
 
 A completed version of this part can be found in the example repository ([01_sign_in](https://github.com/spruceid/sprucekit-quickstart/tree/main/01_sign_in)).
 
-## Connect SpruceKit to Backend
+## Connect SSX to Backend
 
-To use the SpruceKit library on the backend, you must install `@spruceid/sprucekit-server`. Furthermore, we must create the routes required by the authorization module (nonce, sign in, and sign out) for our Next app. To add those, use the following commands:
+To use the SSX library on the backend, you must install `@spruceid/ssx-server`. Furthermore, we must create the routes required by the authorization module (nonce, sign in, and sign out) for our Next app. To add those, use the following commands:
 
 ```bash
-npm i @spruceid/sprucekit-server 
+npm i @spruceid/ssx-server@2.0.0-beta.0
 mkdir app/api \
-      app/api/sprucekit-nonce \
-      app/api/sprucekit-login \
-      app/api/sprucekit-logout
+      app/api/ssx-nonce \
+      app/api/ssx-login \
+      app/api/ssx-logout
 touch .env.local \
-      app/api/_spruceKit.ts \
-      app/api/sprucekit-nonce/route.ts \
-      app/api/sprucekit-login/route.ts \
-      app/api/sprucekit-logout/route.ts
+      app/api/_ssx.ts \
+      app/api/ssx-nonce/route.ts \
+      app/api/ssx-login/route.ts \
+      app/api/ssx-logout/route.ts
 ```
 
 Then, add an environment variable into the `my-app/.env.local` file:
 
 ```bash
-SPRUCE_KIT_SIGNING_KEY=anythingyouwanthere
+SSX_SIGNING_KEY=anythingyouwanthere
 ```
 
-Add a helper file to our code so that we don't have to instantiate a new SpruceKit Server object directly every time. Add the following to `my-app/app/api/_spruceKit.ts` file:
+Add a helper file to our code so that we don't have to instantiate a new SSX Server object directly every time. Add the following to `my-app/app/api/_ssx.ts` file:
 
 ```ts
-import { SpruceKitServer } from "@spruceid/sprucekit-server";
+import { SSXServer } from "@spruceid/ssx-server";
 
-const sk = new SpruceKitServer({
-  signingKey: process.env.SPRUCE_KIT_SIGNING_KEY,
+const ssx = new SSXServer({
+  signingKey: process.env.SSX_SIGNING_KEY,
 });
 
-export default sk;
+export default ssx;
 ```
 
-Now, create an API route for generating a random nonce. This is used to identify the session and prevent replay attacks. Add the following to `my-app/app/api/sprucekit-nonce/route.ts` file:
+Now, create an API route for generating a random nonce. This is used to identify the session and prevent replay attacks. Add the following to `my-app/app/api/ssx-nonce/route.ts` file:
 
 ```ts
-import sk from "../_spruceKit";
+import ssx from "../_ssx";
 
 export async function GET(request: Request) {
-  const nonce = sk.generateNonce();
+  const nonce = ssx.generateNonce();
   return new Response(nonce, {
     status: 200,
     headers: { 'Set-Cookie': `nonce=${nonce}` }
@@ -53,10 +53,10 @@ export async function GET(request: Request) {
 }
 ```
 
-Add a sign-in API route. This route will do all necessary checks in the SIWE message, ensuring it's valid. All checks occur inside the `sprucekit.login()` function. Add the following to `my-app/app/api/sprucekit-login/route.ts` file:
+Add a sign-in API route. This route will do all necessary checks in the SIWE message, ensuring it's valid. All checks occur inside the `ssx.login()` function. Add the following to `my-app/app/api/ssx-login/route.ts` file:
 
 ```ts
-import sk from "../_spruceKit";
+import ssx from "../_ssx";
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'
 
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
   const nonce = cookieStore.get('nonce');
 
   return NextResponse.json(
-    await sk.login(
+    await ssx.login(
       body.siwe,
       body.signature,
       body.daoLogin,
@@ -82,16 +82,16 @@ export async function POST(request: Request) {
 }
 ```
 
-Finally, create the sign-out API route. Add the following to `my-app/app/api/sprucekit-logout/route.ts` file:
+Finally, create the sign-out API route. Add the following to `my-app/app/api/ssx-logout/route.ts` file:
 
 ```ts
 import { NextResponse } from "next/server";
-import sk from "../_spruceKit";
+import ssx from "../_ssx";
 
 export async function POST(request: Request) {
   return NextResponse.json(
     {
-      success: await sk.logout() ?? true
+      success: await ssx.logout() ?? true
     },
     {
       status: 200
@@ -101,14 +101,14 @@ export async function POST(request: Request) {
 ```
 
 
-## Connect SpruceKit to Frontend
+## Connect SSX to Frontend
 
-To use the SpruceKit library on the frontend you must install `@spruceid/sprucekit`. Furthermore, we need to create a component to create the authorization module logic. To add it, use the following commands:
+To use the SSX library on the frontend you must install `@spruceid/ssx`. Furthermore, we need to create a component to create the authorization module logic. To add it, use the following commands:
 
 ```bash
-npm i @spruceid/sprucekit
+npm i @spruceid/ssx@2.0.0-beta.0
 mkdir components
-touch components/SpruceKitComponent.tsx
+touch components/SSXComponent.tsx
 ```
 
 Let's update some CSS by adding the following to `my-app/app/globals.css` file:
@@ -173,7 +173,7 @@ table {
 }
 ```
 
-Then update the NextConfig to make it compatible with SpruceKit by adding the bellow command to `my-app/next.config.js` file:
+Then update the NextConfig to make it compatible with SSX by adding the bellow command to `my-app/next.config.js` file:
 
 ```js
 /** @type {import('next').NextConfig} */
@@ -191,42 +191,42 @@ module.exports = nextConfig
 ```
 
 
-Now create the sign-in and sign-out logic by adding the following to `my-app/components/SpruceKitComponent.tsx` file:
+Now create the sign-in and sign-out logic by adding the following to `my-app/components/SSXComponent.tsx` file:
 
 ```ts
 "use client";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 
-const SpruceKitComponent = () => {
+const SSXComponent = () => {
 
-  const [skProvider, setSpruceKit] = useState<SpruceKit | null>(null);
+  const [ssxProvider, setSSX] = useState<SSX | null>(null);
 
-  const spruceKitHandler = async () => {
-    const sk = new SpruceKit({
+  const ssxHandler = async () => {
+    const ssx = new SSX({
       providers: {
         server: {
           host: "http://localhost:3000/api"
         }
       },
     });
-    await sk.signIn();
-    setSpruceKit(sk);
+    await ssx.signIn();
+    setSSX(ssx);
   };
 
-  const spruceKitLogoutHandler = async () => {
-    skProvider?.signOut();
-    setSpruceKit(null);
+  const ssxLogoutHandler = async () => {
+    ssxProvider?.signOut();
+    setSSX(null);
   };
 
-  const address = skProvider?.address() || '';
+  const address = ssxProvider?.address() || '';
 
   return (
     <>
       <h2>User Authorization Module</h2>
       <p>Authenticate and Authorize using your ETH keys</p>
       {
-        skProvider ?
+        ssxProvider ?
           <>
             {
               address &&
@@ -235,13 +235,13 @@ const SpruceKitComponent = () => {
               </p>
             }
             <br />
-            <button onClick={spruceKitLogoutHandler}>
+            <button onClick={ssxLogoutHandler}>
               <span>
                 Sign-Out
               </span>
             </button>
           </> :
-          <button onClick={spruceKitHandler}>
+          <button onClick={ssxHandler}>
             <span>
               Sign-In with Ethereum
             </span>
@@ -251,22 +251,22 @@ const SpruceKitComponent = () => {
   );
 };
 
-export default SpruceKitComponent;
+export default SSXComponent;
 ```
 
 Finally, add the following to `my-app/app/page.tsx`:
 
 ```ts 
-import SpruceKitComponent from '@/components/SpruceKitComponent';
+import SSXComponent from '@/components/SSXComponent';
 
 export default function Home() {
   return (
-    <SpruceKitComponent />
+    <SSXComponent />
   )
 }
 ```
 
-This SpruceKit configuration assumes you are running the Next.js project using the default port (3000). If you are running in a different port, change the providers.server.host in the SpruceKit config.
+This SSX configuration assumes you are running the Next.js project using the default port (3000). If you are running in a different port, change the providers.server.host in the SSX config.
 
 That's it! Now you can run the app by using:
 

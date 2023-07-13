@@ -1,7 +1,7 @@
-import SpruceKitComponent from '@/components/SpruceKitComponent';
+import SSXComponent from '@/components/SSXComponent';
 
 export default function Home() {
   return (
-    <SpruceKitComponent />
+    <SSXComponent />
   )
 }

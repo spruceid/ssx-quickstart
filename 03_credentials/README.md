@@ -6,10 +6,10 @@
 
 A completed version of this part can be found in the example repository ([03_rebase](https://github.com/spruceid/sprucekit-quickstart/tree/main/03_credentials)).
 
-In this step, you must install Rebase as a new dependency, as it is not yet supported by SpruceKit. Run the following to add the dependency and create the new component file:
+In this step, you must install Rebase as a new dependency, as it is not yet supported by SSX. Run the following to add the dependency and create the new component file:
 
 ```bash
-npm i @rebase-xyz/rebase-client@^0.9.1 ethers@5.7.2
+npm i @spruceid/rebase-client@^0.16.2 ethers@5.7.2
 mkdir utils
 touch utils/rebase.ts \
       components/RebaseCredentialComponent.tsx
@@ -36,7 +36,7 @@ Add the following to `my-app/utils/rebase.ts` to add some util methods of Rebase
 
 ```ts
 export interface BasicPostCredential {
-  type: "WitnessedBasicPost", // The URN of the UUID of the credential.
+  type: "BasicPostAttestation", // The URN of the UUID of the credential.
   id: string, // The DID of the user who is the credential subject, comes from the VC.credentialSubject.id
   subject: string,
   title: string,
@@ -65,7 +65,7 @@ export const toCredentialContent = (jwt_str: string): Record<string, any> | void
   if (!t) throw new Error('Malformed credential, no type property');
   if (t.length !== 2) throw new Error('Malformed credential, type property did not have length of 2');
   const credType = t[1];
-  if (credType !== 'WitnessedBasicPost') throw new Error(`Unsupported Credential Type: ${credType}`);
+  if (credType !== 'BasicPostAttestation') throw new Error(`Unsupported Credential Type: ${credType}`);
   const credID = vc?.id;
   if (!credID) throw new Error('No id property found under vc property in JWT credential');
   const subjID = vc?.credentialSubject?.id;
@@ -79,7 +79,7 @@ export const toCredentialContent = (jwt_str: string): Record<string, any> | void
     issuanceDate
   };
   switch (credType) {
-    case "WitnessedBasicPost": {
+    case "BasicPostAttestation": {
       let next = {
         title: getCredSubjProp("title", vc),
         body: getCredSubjProp("body", vc)
@@ -110,23 +110,17 @@ Then, add the following into `my-app/components/RebaseCredentialComponent.tsx`:
 ```ts
 "use client";
 import { toCredentialEntry } from "@/utils/rebase";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-
-const REBASE_URL_BASE = 'https://rebasedemo.spruceid.workers.dev';
-const endpoints = {
-  instructions: `${REBASE_URL_BASE}/instructions`,
-  statement: `${REBASE_URL_BASE}/statement`,
-  jwt: `${REBASE_URL_BASE}/witness`,
-  verify_jwt: `${REBASE_URL_BASE}/verify`
-};
+import { defaultClientConfig, type Types } from '@spruceid/rebase-client';
+import type { AttestationProof, AttestationStatement } from '@spruceid/rebase-client/bindings';
 
 interface IRebaseCredentialComponent {
-  sk: SpruceKit;
+  ssx: SSX;
 }
 
-const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
+const RebaseCredentialComponent = ({ ssx }: IRebaseCredentialComponent) => {
   const [rebaseClient, setRebaseClient] = useState<any>();
   const [signer, setSigner] = useState<ethers.Signer>();
   const [title, setTitle] = useState<string>('');
@@ -143,19 +137,20 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
 
   const getContentList = async () => {
     setLoading(true);
-    let { data } = await sk.storage.list();
+    let { data } = await ssx.storage.list();
     data = data.filter((d: string) => d.includes('/credentials/'))
     setCredentialList(data);
     setLoading(false);
   };
 
   const createClient = async () => {
-    const Client = (await import('@rebase-xyz/rebase-client')).Client;
-    setRebaseClient(new Client(JSON.stringify(endpoints)))
+    const Client = (await import('@spruceid/rebase-client')).Client;
+    const WasmClient = (await import('@spruceid/rebase-client/wasm')).WasmClient;
+    setRebaseClient(new Client(new WasmClient(JSON.stringify(defaultClientConfig()))))
   };
 
   const createSigner = async () => {
-    const ethSigner = await sk.getSigner();
+    const ethSigner = await ssx.getSigner();
     setSigner(ethSigner);
   };
 
@@ -163,7 +158,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
     return {
       pkh: {
         eip155: {
-          address: sk.address(),
+          address: ssx.address(),
           chain_id: '1'
         }
       }
@@ -175,48 +170,46 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
     if (!signer) throw new Error('Signer is not connected');
   };
 
-  const statement = async (credentialType: string, content: any): Promise<string> => {
+  const statement = async (credentialType: Types.AttestationTypes, content: any): Promise<string> => {
     sanityCheck();
-    const req: Record<string, any> = {
-      opts: {
-        WitnessedSelfIssued: {}
-      }
+    const o = {};
+    (o as any)[credentialType] = Object.assign({ subject: toSubject() }, content);
+    const req: Types.Statements = {
+      Attestation: o as AttestationStatement
     };
-    req.opts.WitnessedSelfIssued[credentialType] = Object.assign({ subject: toSubject() }, content);
-    const j = JSON.stringify(req);
-    const resp = await rebaseClient?.statement(j);
-    const respBody = JSON.parse(resp);
-    if (!respBody.statement) throw new Error('No statement found in witness response');
-    return respBody.statement;
+    const resp = await rebaseClient?.statement(req);
+    if (!resp?.statement) {
+      throw new Error('No statement found in witness response');
+    }
+    return resp.statement;
   };
 
   const witness = async (
-    credentialType: string,
+    credentialType: Types.AttestationTypes,
     content: any,
     signature: string
   ): Promise<string> => {
     sanityCheck();
-    const req: Record<string, any> = {
-      proof: {
-        WitnessedSelfIssued: {}
-      }
-    };
-    req.proof.WitnessedSelfIssued[credentialType] = {
+    const o = {};
+    (o as any)[credentialType] = {
       signature,
       statement: Object.assign({ subject: toSubject() }, content)
     };
-    const j = JSON.stringify(req);
-    const resp = await rebaseClient?.jwt(j);
-    const respBody = JSON.parse(resp);
-    if (!respBody.jwt) throw new Error('No jwt found in witness response');
-    return respBody.jwt;
+    const req: Types.Proofs = {
+      Attestation: o as AttestationProof
+    };
+    const resp = await rebaseClient?.witness_jwt(req);
+    if (!resp?.jwt) {
+      throw new Error('No jwt found in witness response');
+    }
+    return resp.jwt;
   };
 
   const issue = async () => {
     setLoading(true);
     try {
       const fileName = 'credentials/post_' + Date.now();
-      const credentialType = 'WitnessedBasicPost';
+      const credentialType = 'BasicPostAttestation';
       const content = {
         title,
         body
@@ -224,7 +217,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
       const stmt = await statement(credentialType, content);
       const sig = (await signer?.signMessage(stmt)) ?? '';
       const jwt_str = await witness(credentialType, content, sig);
-      await sk.storage.put(fileName, jwt_str);
+      await ssx.storage.put(fileName, jwt_str);
       setCredentialList((prevList) => [...prevList, `my-app/${fileName}`]);
     } catch (e) {
       console.error(e);
@@ -236,7 +229,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
     setLoading(true);
     try {
       const contentName = content.replace('my-app/', '')
-      const { data } = await sk.storage.get(contentName);
+      const { data } = await ssx.storage.get(contentName);
       setViewingContent(`${content}:\n${JSON.stringify(toCredentialEntry(data), null, 2)}`);
     } catch (e) {
       console.error(e);
@@ -247,7 +240,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
   const handleDeleteContent = async (content: string) => {
     setLoading(true);
     const contentName = content.replace('my-app/', '')
-    await sk.storage.delete(contentName);
+    await ssx.storage.delete(contentName);
     setCredentialList((prevList) => prevList.filter((c) => c !== content));
     setLoading(false);
   };
@@ -257,7 +250,7 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
       <h2>Rebase</h2>
       <p>Input data for credential issuance</p>
       <p style={{ maxWidth: 500, fontSize: 12 }}>
-        You can issue a WitnessedBasicPost by filling the fields and clicking the button bellow.
+        You can issue a BasicPostAttestation by filling the fields and clicking the button bellow.
         Title and body can be any string.
       </p>
       <input
@@ -325,21 +318,21 @@ const RebaseCredentialComponent = ({ sk }: IRebaseCredentialComponent) => {
 export default RebaseCredentialComponent;
 ```
 
-Now update the SpruceKitComponent to import the credential component module by adding the following into `my-app/components/SpruceKitComponent.tsx`:
+Now update the SSXComponent to import the credential component module by adding the following into `my-app/components/SSXComponent.tsx`:
 
 ```ts
 "use client";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 import KeplerStorageComponent from "./KeplerStorageComponent";
 import RebaseCredentialComponent from "./RebaseCredentialComponent";
 
-const SpruceKitComponent = () => {
+const SSXComponent = () => {
 
-  const [skProvider, setSpruceKit] = useState<SpruceKit | null>(null);
+  const [ssxProvider, setSSX] = useState<SSX | null>(null);
 
-  const spruceKitHandler = async () => {
-    const sk = new SpruceKit({
+  const ssxHandler = async () => {
+    const ssx = new SSX({
       providers: {
         server: {
           host: "http://localhost:3000/api"
@@ -353,23 +346,23 @@ const SpruceKitComponent = () => {
         }
       }
     });
-    await sk.signIn();
-    setSpruceKit(sk);
+    await ssx.signIn();
+    setSSX(ssx);
   };
 
-  const spruceKitLogoutHandler = async () => {
-    skProvider?.signOut();
-    setSpruceKit(null);
+  const ssxLogoutHandler = async () => {
+    ssxProvider?.signOut();
+    setSSX(null);
   };
 
-  const address = skProvider?.address() || '';
+  const address = ssxProvider?.address() || '';
 
   return (
     <>
       <h2>User Authorization Module</h2>
       <p>Authenticate and Authorize using your ETH keys</p>
       {
-        skProvider ?
+        ssxProvider ?
           <>
             {
               address &&
@@ -378,17 +371,17 @@ const SpruceKitComponent = () => {
               </p>
             }
             <br />
-            <button onClick={spruceKitLogoutHandler}>
+            <button onClick={ssxLogoutHandler}>
               <span>
                 Sign-Out
               </span>
             </button>
             <br />
-            <KeplerStorageComponent sk={skProvider} />
+            <KeplerStorageComponent ssx={ssxProvider} />
             <br />
-            <RebaseCredentialComponent sk={skProvider} />
+            <RebaseCredentialComponent ssx={ssxProvider} />
           </> :
-          <button onClick={spruceKitHandler}>
+          <button onClick={ssxHandler}>
             <span>
               Sign-In with Ethereum
             </span>
@@ -398,7 +391,7 @@ const SpruceKitComponent = () => {
   );
 };
 
-export default SpruceKitComponent;
+export default SSXComponent;
 ```
 
 Finally, you can run the app by using:

@@ -1,10 +1,10 @@
-# SpruceKit Quickstart
+# SSX Quickstart
 
-SpruceKit Quickstart is an extremely basic Client/Server demo to help developers get their hands on a fully functional and easy to understand demo.
+SSX Quickstart is an extremely basic Client/Server demo to help developers get their hands on a fully functional and easy to understand demo.
 
-In this quickstart we will guide you to build an application by using SpruceKit authorization and storage modules, and integrate with [Rebase](https://github.com/spruceid/rebase) for credential issuance.
+In this quickstart we will guide you to build an application by using SSX authorization and storage modules, and integrate with [Rebase](https://github.com/spruceid/rebase) for credential issuance.
 
-A code-along tutorial can be found in the subfolders README.md and on [...]().
+A code-along tutorial can be found in the subfolders README.md and on https://sprucekit.dev/ssx/quickstart.
 
 ## Requirements
 

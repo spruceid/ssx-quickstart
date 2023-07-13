@@ -31,4 +31,4 @@ cd my-app
 npm run dev
 ```
 
-You now have a Next.js app ready to be integrated with SpruceKit library. 
+You now have a Next.js app ready to be integrated with SSX library. 

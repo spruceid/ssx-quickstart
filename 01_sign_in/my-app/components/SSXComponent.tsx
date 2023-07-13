@@ -1,36 +1,36 @@
 "use client";
-import { SpruceKit } from "@spruceid/sprucekit";
+import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 
-const SpruceKitComponent = () => {
+const SSXComponent = () => {
 
-  const [skProvider, setSpruceKit] = useState<SpruceKit | null>(null);
+  const [ssxProvider, setSSX] = useState<SSX | null>(null);
 
-  const spruceKitHandler = async () => {
-    const sk = new SpruceKit({
+  const ssxHandler = async () => {
+    const ssx = new SSX({
       providers: {
         server: {
           host: "http://localhost:3000/api"
         }
       },
     });
-    await sk.signIn();
-    setSpruceKit(sk);
+    await ssx.signIn();
+    setSSX(ssx);
   };
 
-  const spruceKitLogoutHandler = async () => {
-    skProvider?.signOut();
-    setSpruceKit(null);
+  const ssxLogoutHandler = async () => {
+    ssxProvider?.signOut();
+    setSSX(null);
   };
 
-  const address = skProvider?.address() || '';
+  const address = ssxProvider?.address() || '';
 
   return (
     <>
       <h2>User Authorization Module</h2>
       <p>Authenticate and Authorize using your ETH keys</p>
       {
-        skProvider ?
+        ssxProvider ?
           <>
             {
               address &&
@@ -39,13 +39,13 @@ const SpruceKitComponent = () => {
               </p>
             }
             <br />
-            <button onClick={spruceKitLogoutHandler}>
+            <button onClick={ssxLogoutHandler}>
               <span>
                 Sign-Out
               </span>
             </button>
           </> :
-          <button onClick={spruceKitHandler}>
+          <button onClick={ssxHandler}>
             <span>
               Sign-In with Ethereum
             </span>
@@ -55,4 +55,4 @@ const SpruceKitComponent = () => {
   );
 };
 
-export default SpruceKitComponent;
+export default SSXComponent;
