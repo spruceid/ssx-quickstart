@@ -4,7 +4,7 @@ SSX Quickstart is an extremely basic Client/Server demo to help developers get t
 
 In this quickstart we will guide you to build an application by using SSX authorization and storage modules, and integrate with [Rebase](https://github.com/spruceid/rebase) for credential issuance.
 
-A code-along tutorial can be found in the subfolders README.md and on https://sprucekit.dev/ssx/quickstart.
+A code-along tutorial can be found in the subfolders README.md and in the docs [here](https://www.sprucekit.dev/ssx/quickstart).
 
 ## Requirements
 
