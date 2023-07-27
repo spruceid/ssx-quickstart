@@ -1,0 +1,57 @@
+h1,
+h2 {
+  margin: 0px;
+}
+
+h2 span {
+  font-size: 12px;
+}
+
+body {
+  padding: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+button {
+  background: hsl(0, 0%, 60%);
+  border-radius: 12px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+}
+
+button span {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  background: hsl(153, 33%, 95%);
+  color: black;
+  transform: translateY(-4px);
+  will-change: transform;
+  transition: transform 250ms;
+}
+
+button:hover span {
+  transform: translateY(-8px);
+}
+
+button:active span {
+  transform: translateY(-2px);
+}
+
+button:disabled span {
+  transform: translateY(-2px);
+  opacity: .7;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0 1em;
+}
