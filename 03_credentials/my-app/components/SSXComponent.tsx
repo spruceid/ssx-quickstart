@@ -38,6 +38,7 @@ const SSXComponent = () => {
     <>
       <h2>User Authorization Module</h2>
       <p>Authenticate and Authorize using your ETH keys</p>
+      <br></br>
       {
         ssxProvider ?
           <>
