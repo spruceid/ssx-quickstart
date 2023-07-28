@@ -12,8 +12,6 @@ const QuestCredentialComponent = ({ ssx }: ICredentialComponent) => {
     const getCredentialList = async () => {
       try {
         const credentialListResult = await ssx.credentials?.list?.({ removePrefix: true });
-        console.log(credentialListResult)
-
         if (credentialListResult?.data) {
           setCredentialsList(credentialListResult.data);
         }
