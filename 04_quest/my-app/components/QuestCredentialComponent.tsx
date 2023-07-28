@@ -5,18 +5,14 @@ interface ICredentialComponent {
   ssx: SSX;
 }
 
-const CredentialComponent = ({ ssx }: ICredentialComponent) => {
+const QuestCredentialComponent = ({ ssx }: ICredentialComponent) => {
   const [credentialsList, setCredentialsList] = useState<string[]>([]);
 
   useEffect(() => {
-    const getContentAndCredentialList = async () => {
+    const getCredentialList = async () => {
       try {
-        const contentListResult = await ssx.storage.list({ removePrefix: true });
         const credentialListResult = await ssx.credentials?.list?.({ removePrefix: true });
-
-        if (contentListResult?.data) {
-          setCredentialsList(contentListResult.data);
-        }
+        console.log(credentialListResult)
 
         if (credentialListResult?.data) {
           setCredentialsList(credentialListResult.data);
@@ -26,17 +22,17 @@ const CredentialComponent = ({ ssx }: ICredentialComponent) => {
       }
     };
 
-    getContentAndCredentialList();
+    getCredentialList();
   }, [ssx]);
 
   return (
     <div style={{ marginTop: 25 }}>
-      <h2>Credentials</h2>
+      <h2>Quest Credentials</h2>
       <table>
         <tbody>
-          {credentialsList?.map((content, i) => (
+          {credentialsList?.map((credential, i) => (
             <tr key={i}>
-              <td>{content}</td>
+              <td>{credential}</td>
             </tr>
           ))}
         </tbody>
@@ -45,4 +41,4 @@ const CredentialComponent = ({ ssx }: ICredentialComponent) => {
   );
 };
 
-export default CredentialComponent;
+export default QuestCredentialComponent;

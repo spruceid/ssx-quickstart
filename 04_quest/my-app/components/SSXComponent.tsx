@@ -1,8 +1,9 @@
 "use client";
 import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
-import CredentialComponent from "./CredentialComponent";
-
+import KeplerStorageComponent from "./KeplerStorageComponent";
+import RebaseCredentialComponent from "./RebaseCredentialComponent";
+import QuestCredentialComponent from './QuestCredentialComponent'
 const SSXComponent = () => {
 
   const [ssxProvider, setSSX] = useState<SSX | null>(null);
@@ -36,7 +37,7 @@ const SSXComponent = () => {
 
   return (
     <>
-      <h2>Credentials Module</h2>
+      <h2>User Authorization Module</h2>
       <p>Authenticate and Authorize using your ETH keys</p>
       {
         ssxProvider ?
@@ -54,8 +55,11 @@ const SSXComponent = () => {
               </span>
             </button>
             <br />
+            <KeplerStorageComponent ssx={ssxProvider} />
             <br />
-            <CredentialComponent ssx={ssxProvider} />
+            <RebaseCredentialComponent ssx={ssxProvider} />
+            <br />
+            <QuestCredentialComponent ssx={ssxProvider} />
           </> :
           <button onClick={ssxHandler}>
             <span>
