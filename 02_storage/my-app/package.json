@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@spruceid/ssx": "^2.0.0",
+    "@spruceid/ssx": "^2.1.0",
     "@spruceid/ssx-server": "^2.0.0",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
