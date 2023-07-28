@@ -1,8 +1,7 @@
 "use client";
 import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
-import KeplerStorageComponent from "./KeplerStorageComponent";
-import RebaseCredentialComponent from "./RebaseCredentialComponent";
+import CredentialComponent from "./CredentialComponent";
 
 const SSXComponent = () => {
 
@@ -17,10 +16,10 @@ const SSXComponent = () => {
       },
       modules: {
         storage: {
-          prefix: 'shared/credentials',
+          prefix: 'my-app',
           hosts: ['https://kepler.spruceid.xyz'],
           autoCreateNewOrbit: true
-        }
+        },
         credentials: true
       }
     });
@@ -37,7 +36,7 @@ const SSXComponent = () => {
 
   return (
     <>
-      <h2>User Authorization Module</h2>
+      <h2>Credentials Module</h2>
       <p>Authenticate and Authorize using your ETH keys</p>
       {
         ssxProvider ?
@@ -55,9 +54,8 @@ const SSXComponent = () => {
               </span>
             </button>
             <br />
-            <KeplerStorageComponent ssx={ssxProvider} />
             <br />
-            <RebaseCredentialComponent ssx={ssxProvider} />
+            <CredentialComponent ssx={ssxProvider} />
           </> :
           <button onClick={ssxHandler}>
             <span>
