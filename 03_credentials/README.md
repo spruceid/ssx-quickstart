@@ -90,6 +90,8 @@ export const toCredentialContent = (jwt_str: string): Record<string, any> | void
       } catch (_e) { }
       return Object.assign({}, c, next) as BasicPostCredential;
     }
+    default:
+      return vc;
   }
 };
 

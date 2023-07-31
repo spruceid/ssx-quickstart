@@ -2,7 +2,6 @@ import { SSX } from "@spruceid/ssx";
 import { useEffect, useState } from "react";
 import { toCredentialEntry } from "@/utils/rebase";
 
-
 interface ICredentialComponent {
   ssx: SSX;
 }
@@ -11,9 +10,6 @@ const SpruceKitCredentialComponent = ({ ssx }: ICredentialComponent) => {
   const [credentialsList, setCredentialsList] = useState<string[]>([]);
   const [viewingContent, setViewingContent] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
-
-
 
   const handleGetContent = async (content: string) => {
     setLoading(true);
@@ -38,7 +34,6 @@ const SpruceKitCredentialComponent = ({ ssx }: ICredentialComponent) => {
         console.error("Error fetching data:", error);
       }
     };
-
     getCredentialList();
   }, [ssx]);
 
