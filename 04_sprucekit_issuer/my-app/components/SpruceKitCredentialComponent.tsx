@@ -5,7 +5,7 @@ interface ICredentialComponent {
   ssx: SSX;
 }
 
-const QuestCredentialComponent = ({ ssx }: ICredentialComponent) => {
+const SpruceKitCredentialComponent = ({ ssx }: ICredentialComponent) => {
   const [credentialsList, setCredentialsList] = useState<string[]>([]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const QuestCredentialComponent = ({ ssx }: ICredentialComponent) => {
 
   return (
     <div style={{ marginTop: 25 }}>
-      <h2>Quest Credentials</h2>
+      <h2>SpruceKit Credentials</h2>
       <table>
         <tbody>
           {credentialsList?.map((credential, i) => (
@@ -39,4 +39,4 @@ const QuestCredentialComponent = ({ ssx }: ICredentialComponent) => {
   );
 };
 
-export default QuestCredentialComponent;
+export default SpruceKitCredentialComponent;

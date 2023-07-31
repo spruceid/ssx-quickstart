@@ -3,7 +3,7 @@ import { SSX } from "@spruceid/ssx";
 import { useState } from "react";
 import KeplerStorageComponent from "./KeplerStorageComponent";
 import RebaseCredentialComponent from "./RebaseCredentialComponent";
-import QuestCredentialComponent from './QuestCredentialComponent'
+import SpruceKitCredentialComponent from './SpruceKitCredentialComponent'
 const SSXComponent = () => {
 
   const [ssxProvider, setSSX] = useState<SSX | null>(null);
@@ -59,7 +59,7 @@ const SSXComponent = () => {
             <br />
             <RebaseCredentialComponent ssx={ssxProvider} />
             <br />
-            <QuestCredentialComponent ssx={ssxProvider} />
+            <SpruceKitCredentialComponent ssx={ssxProvider} />
           </> :
           <button onClick={ssxHandler}>
             <span>
