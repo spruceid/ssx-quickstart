@@ -65,7 +65,6 @@ export const toCredentialContent = (jwt_str: string): Record<string, any> | void
   if (!t) throw new Error('Malformed credential, no type property');
   if (t.length !== 2) throw new Error('Malformed credential, type property did not have length of 2');
   const credType = t[1];
-  if (credType !== 'BasicPostAttestation') throw new Error(`Unsupported Credential Type: ${credType}`);
   const credID = vc?.id;
   if (!credID) throw new Error('No id property found under vc property in JWT credential');
   const subjID = vc?.credentialSubject?.id;

@@ -12,7 +12,7 @@ In this step, we will use the credentials module to access credentials issued in
 
 You can create the folders and files by yourself or by running the bash command below:
 ```bash
-touch components/QuestCredentialComponent.tsx
+touch components/SpruceKitCredentialComponent.tsx
 ```
 
 Add the following into `my-app/components/SpruceKitCredentialComponent.tsx`
@@ -20,7 +20,6 @@ Add the following into `my-app/components/SpruceKitCredentialComponent.tsx`
 import { SSX } from "@spruceid/ssx";
 import { useEffect, useState } from "react";
 import { toCredentialEntry } from "@/utils/rebase";
-
 
 interface ICredentialComponent {
   ssx: SSX;
@@ -30,9 +29,6 @@ const SpruceKitCredentialComponent = ({ ssx }: ICredentialComponent) => {
   const [credentialsList, setCredentialsList] = useState<string[]>([]);
   const [viewingContent, setViewingContent] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
-
-
 
   const handleGetContent = async (content: string) => {
     setLoading(true);
@@ -91,14 +87,15 @@ const SpruceKitCredentialComponent = ({ ssx }: ICredentialComponent) => {
 };
 
 export default SpruceKitCredentialComponent;
-
 ```
 
-The following changes in our SSX component at my-app/components/SSXComponent.tsx are required to:
-enable the credentials module in our SSX configuration
-import the SpruceKitCredentialComponent we just created
-insert the component alongside our KeplerStorageComponent and RebaseCredentialComponent
-With these changes, the SSXComponent.tsx should look like this:
+The following changes in our SSX component at `my-app/components/SSXComponent.tsx` are required to:
+
+- enable the credentials module in our SSX configuration
+- import the SpruceKitCredentialComponent we just created
+- insert the component alongside our `KeplerStorageComponent` and `RebaseCredentialComponent`
+
+With these changes, the `SSXComponent.tsx` should look like this:
 ```tsx
 "use client";
 import { SSX } from "@spruceid/ssx";
