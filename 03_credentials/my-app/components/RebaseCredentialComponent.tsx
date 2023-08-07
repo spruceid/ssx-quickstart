@@ -137,15 +137,17 @@ const RebaseCredentialComponent = ({ ssx }: IRebaseCredentialComponent) => {
 
   const handleVerify = async (content: string) => {
     try {
-      const contentName = content.replace('my-app/', '')
+      const contentName = content.replace('my-app/', '');
       const { data } = await ssx.storage.get(contentName);
       const jwt = { jwt: toCredentialEntry(data).jwt };
       let res = await rebaseClient.verify(jwt);
-      console.log(res)
+      alert("Verification succeeded");
     } catch (e) {
       console.error(e);
+      alert("An error occurred during verification");
     }
-  }
+  };
+
   return (
     <div style={{ marginTop: 25 }}>
       <h2>Rebase</h2>
