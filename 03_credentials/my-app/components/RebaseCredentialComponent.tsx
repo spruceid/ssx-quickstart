@@ -135,6 +135,17 @@ const RebaseCredentialComponent = ({ ssx }: IRebaseCredentialComponent) => {
     setLoading(false);
   };
 
+  const handleVerify = async (content: string) => {
+    try {
+      const contentName = content.replace('my-app/', '')
+      const { data } = await ssx.storage.get(contentName);
+      const jwt = { jwt: toCredentialEntry(data).jwt };
+      let res = await rebaseClient.verify(jwt);
+      console.log(res)
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return (
     <div style={{ marginTop: 25 }}>
       <h2>Rebase</h2>
@@ -192,6 +203,16 @@ const RebaseCredentialComponent = ({ ssx }: IRebaseCredentialComponent) => {
               >
                 <span>
                   DELETE
+                </span>
+              </button>
+            </td>
+            <td>
+              <button
+                onClick={() => handleVerify(content)}
+                disabled={loading}
+              >
+                <span>
+                  VERIFY
                 </span>
               </button>
             </td>
